@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view name="mm_gzlj" title="工装类型管理" onReady="ready">
+	<normal-actions>
+		<button name="addBtn" label="添加"  type="button" icon="icon-Add_to" onClick="openAddWindow"></button>
+		<button name="queryBtn" label="查询"  type="button" icon="icon-query" onClick="openQueryWindow"></button>
+	</normal-actions>
+	<table name="table_wlgl" scroll="false" minheight="430" url="/wlgl/table_wlgl?wllb=('20','30')"  layoutconstraint="md:12;sm:12;">		
+		<column label="工装类型编号" name="wlbh"  ></column>
+		<column label="工装id" name="wlid" key="true" hidden="true"></column>
+		<column label="工装名称" name="wlmc"  ></column>
+		<column label="工装品牌" name="wlpp"  ></column>
+		<column label="计量单位" name="wldwdm" type="dict" dictionary="JLDW" ></column>
+		<column label="工装类型" name="wllxdm" type="dict" dictionary="WLLX"></column>
+		<column label="工装类别" name="wllbdm"  type="dict" dictionary="GZLB"></column>
+		<column label="工装状态" name="wlzt" type="dict" dictionary="WLZT"></column>
+		<column label="工装成本(元)" name="wlcb" ></column>
+		<column label="工装规格" name="wlgg" ></column>
+		<column label="工装条码" name="wltm" hidden="true"></column>
+		<column label="备注" name="bz" hidden="true"></column>
+		<column label="有效期" name="yxq" hidden="true"></column>
+		<column label="操作" type="operation">
+		<attribute name="formatoptions"><![CDATA[
+			[
+				{
+					name:"edit",
+					icon:"icon-edit",
+					label:"编辑",
+					click:handleOperation
+				},
+				{
+					name:"del",
+					icon:"icon-delete",
+					label:"删除",
+					click:delRow
+				}
+			]
+			
+		]]></attribute>
+		</column>
+	</table>
+	
+	<modal name="qyeryModal" heading="查询工装" sizing="large" show="false" keyboard="true"  onShown="qyeryModalOnShown">
+		<modal-body>
+			<form name="form-horizontal"  horizontal="true">
+				<form-body>
+					<form-group>
+						<label for="query_wlbh " text="工装类型编号" layoutconstraint="md:2;sm:2"/>
+						<text name="query_wlbh" placeholder="请输入工装类型编号" layoutconstraint="md:7;sm:7;"/>
+					</form-group>
+					<form-group>
+						<label for="query_wlmc" text="工装名称" layoutconstraint="md:2;sm:2"/>
+						<text name="query_wlmc" placeholder="请输入工装名称" layoutconstraint="md:7;sm:7;"/>
+					</form-group>
+					<form-group>
+						<label for="query_wllxdm" text="工装类型" layoutconstraint="md:2"/>
+					    <select name="query_wllxdm"  dictionary="WLLX"  placeholder="请选择工装类型" layoutconstraint="md:4;"></select>
+ 					</form-group>
+					<form-group>
+						<label for="query_wllbdm" text="工装类别" layoutconstraint="md:2"/>
+					    <select name="query_wllbdm"  dictionary="GZLB"  placeholder="请选择工装类别" layoutconstraint="md:4;"></select>
+ 					</form-group>
+ 					<form-group>
+						<label for="query_wlpp " text="工装品牌" layoutconstraint="md:2;sm:2"/>
+						<text name="query_wlpp" placeholder="请输入工装品牌" layoutconstraint="md:7;sm:7;"/>
+					</form-group>
+					<form-group>
+						<label for="query_wltm" text="工装条码" layoutconstraint="md:2;sm:2"/>
+						<text name="query_wltm" placeholder="请输入工装条码" layoutconstraint="md:7;sm:7;"/>
+					</form-group>
+					<form-group>
+						<label for="query_qyzt" text="启用状态" layoutconstraint="md:2"/>
+					    <select name="query_qyzt" dictionary="WLZT" placeholder="请选择启用状态"  layoutconstraint="md:4;"></select>
+ 					</form-group>
+				</form-body>
+			</form>
+		</modal-body>
+		<modal-footer>
+			<button name="closeqyeryModalClick1" label="取消" type="button" context="primary"  onClick="closeQueryWindow"></button>
+			<button name="qyeryModalClick" label="查询" type="button" context="primary" onClick="queryBtnClick"></button>
+		</modal-footer>
+	</modal>
+	<modal name="addModal" heading="添加/修改工装" sizing="large" show="false" keyboard="true">
+		<modal-body>
+			<form name="form_edit"  horizontal="true">
+				<form-body>
+					<form-group>
+						 <hidden name="add_wlid"  />
+						<label for="add_wlbh" text="工装类型编号" layoutconstraint="md:2;sm:2"/>
+						<text name="add_wlbh" placeholder="请输入工装类型编号" validate="{required:true}" layoutconstraint="md:4;sm:4;"/>
+						<label for="add_wlmc" text="工装名称" layoutconstraint="md:2;sm:2"/>
+						<text name="add_wlmc" placeholder="请输入工装名称" validate="{required:true}" layoutconstraint="md:4;sm:4;"/>
+					</form-group>
+					<form-group>
+						<label for="add_wlgg " text="工装规格" layoutconstraint="md:2;sm:2"/>
+						<text name="add_wlgg" placeholder="请输入工装规格" validate="{required:true}" layoutconstraint="md:4;sm:4;"/>
+						<label for="add_wlcb" text="工装成本(元)" layoutconstraint="md:2;sm:2"/>
+						<text name="add_wlcb" placeholder="请输入工装成本" layoutconstraint="md:4;sm:4;"/>
+					</form-group>
+					<form-group>
+						<label for="add_wllxdm" text="工装类型" layoutconstraint="md:2"/>
+					    <select name="add_wllxdm" validate="{required:true}" dictionary="WLLX"  placeholder="请选择工装类型" layoutconstraint="md:4;"></select>
+						<label for="add_wllbdm" text="工装类别" layoutconstraint="md:2"/>
+					    <select name="add_wllbdm" validate="{required:true}" dictionary="GZLB"  placeholder="请选择工装类别" layoutconstraint="md:4;"></select>
+ 					</form-group>
+ 					<form-group>
+						<label for="add_wlpp" text="工装品牌" layoutconstraint="md:2;sm:2"/>
+						<text name="add_wlpp" placeholder="请输入工装品牌" layoutconstraint="md:4;sm:4;"/>
+						<label for="add_qyzt" text="启用状态" layoutconstraint="md:2"/>
+   					    <select name="add_qyzt" validate="{required:true}" dictionary="WLZT" placeholder="请选择启用状态"  layoutconstraint="md:4;"></select>
+					</form-group>
+					<form-group>
+						<label for="add_wljldw" text="计量单位" layoutconstraint="md:2"/>
+					    <select name="add_wljldw" validate="{required:true}" dictionary="NFJLDW"  placeholder="请选择计量单位" layoutconstraint="md:4;"></select>
+ 					</form-group>
+ 					<form-group>
+						<label for="add_bz" text="备注" layoutconstraint="md:2"/>
+						<textarea name="add_bz" sizing="middle" layoutconstraint="md:10"/>
+					</form-group>
+				</form-body>
+			</form>
+		</modal-body>
+		<modal-footer>
+			<button name="addModalBtn" label="保存" type="button" context="primary" onClick="addBtnClick"></button>
+			<button name="addNextBtn" label="保存并继续" type="button" context="primary" onClick="addNextBtnClick"></button>
+			<button name="closeAddBtn" label="取消" type="button" context="primary"  onClick="closeAddWindow"></button>
+		</modal-footer>
+	</modal>
+	<attribute name="javascript">
+	<![CDATA[
+		function  ready(){
+		
+			$.validator.addMethod("positive", function(value, element) {
+			var regex = /^[0-9].*$/;
+			
+			//^[0-9]+(\.[0-9]{2})?$ //两位小数的正数
+			//^[0-9].*$ //正数（包括整数和小数）
+			
+			return regex.test(value);
+			}, "请输入正数");
+			
+			$('.close').click(function(){
+				closeAddWindow();
+			})
+			
+		}
+		function qyeryModalOnShown() {
+	    	 $('#form-horizontal')[0].reset();
+	    	 ui.select('query_wllxdm').val('');
+	    	 ui.select('query_wllbdm').val('');
+	    	 ui.select('query_qyzt').val('');
+	    }
+	
+		document.onkeydown=function(event){            
+			var e = event || window.event || arguments.callee.caller.arguments[0];            
+			if(e && e.keyCode==13){     
+			 saveBtnClick();
+			}       
+		}; 
+	
+		function table_wlglClickrow(rowid,status) {
+			if(status)
+			{
+				ui.table("table_wlgl").editRow(rowid);
+			}else{
+				ui.table("table_wlgl").restoreRow(rowid);
+			}
+		}
+		
+		function openQueryWindow() {
+	    	ui.modal("qyeryModal").show();
+	    }
+	    function closeQueryWindow() {
+	    	ui.modal("qyeryModal").hide();
+	    }
+		function openAddWindow() {
+	    	ui.modal("addModal").show();
+	    }
+	    
+	    function closeAddWindow() {
+	    	ui.select('add_wllxdm').val('');
+			ui.select('add_wllbdm').val('');
+			ui.select('add_wljldw').val('');
+			ui.select('add_qyzt').val(''); 
+			ui.hidden("add_wlid").val('');
+	    	$('#form_edit')[0].reset();
+	    	$('#form_edit').validate().resetForm();
+	    	ui.modal("addModal").hide();
+	    	
+	    }
+		var rowid;
+		function addNextBtnClick(){
+			if(ui.form("form_edit").valid())
+			{
+				var data_row = {};
+				data_row.wlbh = $('#add_wlbh').val();
+				data_row.wlmc = $('#add_wlmc').val();
+				data_row.wlgg = $('#add_wlgg').val();
+				data_row.wlcb = $('#add_wlcb').val();
+				data_row.wllxdm = $('#add_wllxdm').val();
+				data_row.wllbdm = $('#add_wllbdm').val();
+				data_row.wlpp = $('#add_wlpp').val();
+				data_row.wltm = $('#add_wltm').val();
+				data_row.wldwdm = $('#add_wljldw').val();
+				data_row.wlzt = $('#add_qyzt').val();
+				data_row.bz = ui.textarea('add_bz').val();
+				data_row.yxq = $('#add_yxq').val();
+				data_row.wlid = ui.hidden("add_wlid").val();
+				$.ajax({
+			             type: "POST",
+			             url:  ui.getRealUrl("/wlgl/update_wlxx"),
+			             async: false,
+			             data: {data_list : JSON.stringify(data_row)},
+			             success: function(data){		
+			             	$('#form_edit')[0].reset(); 
+			             	ui.select('add_wllxdm').val('');
+							ui.select('add_wllbdm').val('');
+							ui.select('add_wljldw').val('');
+							ui.select('add_qyzt').val('');           	
+			             	ui.table("table_wlgl").reload();
+			             }
+			         });
+			}
+			
+			
+		}
+		function addBtnClick(){
+			if(ui.form("form_edit").valid())
+			{
+				addNextBtnClick();
+				closeAddWindow();
+			}
+			
+		}
+		
+		function queryBtnClick(){
+			var data_row = {};
+			data_row.query_wlbh = $('#query_wlbh').val();
+			data_row.query_wlmc = $('#query_wlmc').val();
+			data_row.query_wlpp = $('#query_wlpp').val();
+			data_row.query_wltm = $('#query_wltm').val();
+			data_row.query_wllxdm = $('#query_wllxdm').val();
+			data_row.query_wllbdm = $('#query_wllbdm').val();
+			data_row.query_qyzt = $('#query_qyzt').val();
+			ui.table("table_wlgl").search(data_row);
+			closeQueryWindow();
+		}
+		
+		
+		//删除数据	
+		function delRow(name,rowid){
+		
+		 	if('1'==ui.table("table_wlgl").getCell(rowid,"addSign"))
+		 	{
+		 		ui.table("table_wlgl").removeRow(rowid);
+		 		editid = "";
+		 		return false;
+		 	}
+		 	var data_list= [];
+		 	var data_row = {};
+			data_row.wlid = rowid;
+			data_list.push(data_row);
+		 	ui.confirm("您确定要删除该条记录吗？", function(req){
+			if(req){
+		 	$.ajax({
+		        type: "POST",
+		        url:  ui.getRealUrl("/wlgl/del_wlxx"),
+		        async: false,
+		        data: {data_list : JSON.stringify(data_list)},
+		        success: function(data){
+		          	ui.table("table_wlgl").removeRow(rowid);
+		            ui.success("删除成功！");
+		         },
+		         error:function(){
+		         	//ui.table("table_wlgl").reload();
+		            ui.error()("删除失败！");
+		          }
+		     });
+		     }
+		     });
+		}
+		
+		function handleOperation(name,rowid) {
+			ui.hidden("add_wlid").val(rowid);
+			$('#add_wlbh').val(ui.table("table_wlgl").getCell(rowid,"wlbh"));
+			$('#add_wlmc').val(ui.table("table_wlgl").getCell(rowid,"wlmc"));
+			$('#add_wlpp').val(ui.table("table_wlgl").getCell(rowid,"wlpp"));
+			$('#add_wltm').val(ui.table("table_wlgl").getCell(rowid,"wltm"));
+			$('#add_wlgg').val(ui.table("table_wlgl").getCell(rowid,"wlgg"));
+			$('#add_wlcb').val(ui.table("table_wlgl").getCell(rowid,"wlcb"));
+			$('#add_yxq').val(ui.table("table_wlgl").getCell(rowid,"yxq"));
+			ui.select('add_wllxdm').val(ui.table("table_wlgl").getCell(rowid,"wllxdm"));
+			ui.select('add_wllbdm').val(ui.table("table_wlgl").getCell(rowid,"wllbdm"));
+			ui.select('add_wljldw').val(ui.table("table_wlgl").getCell(rowid,"wldwdm"));
+			ui.select('add_qyzt').val(ui.table("table_wlgl").getCell(rowid,"wlzt"));
+			ui.textarea('add_bz').val(ui.table("table_wlgl").getCell(rowid,"bz"));
+	    	ui.modal("addModal").show();
+		}
+	]]>
+	</attribute>
+</view>

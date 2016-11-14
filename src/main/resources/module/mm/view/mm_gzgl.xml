@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view name="mm_gzgl" title="工装管理">
+	<normal-actions>
+		<button name="addBtn" label="添加"  type="button" icon="icon-Add_to" onClick="addRow"></button>
+		<button name="queryBtn" label="查询"  type="button" icon="icon-query" onClick="openQueryWindow"></button>
+	</normal-actions>
+	<table name="table_gzgl" scroll="false" minheight="430" url="/gzgl/table_gzgl" layoutconstraint="md:12;sm:12;" onLoaded="table_editreset" onDblClickRow="dbltable_gzglClickrow" >
+		<column label="工装id" name="gzid" key="true" hidden="true"></column>
+		<column label="物料id" name="gzlxbh"  hidden="true"></column>
+		<column label="工装编号" name="gzbh" editable="true"  editrules="{required:true}"></column>
+		<column label="工装类别" name="wllbdm"  sortable="true"  editable="true"  type="dict" dictionary="gzlb" editrules="{required:true}" />
+		<column label="类型" name="wlid" sortable="true" editable="true" edittype="select"  type="text" editrules="{required:true}">
+			<attribute name="editoptions"><![CDATA[
+			{
+				url:"/gzgl/changeWllb",
+				parent:"wllbdm",
+				onChange:function(){
+					if($(this).val()){
+						var rows = ui.table("table_gzgl").getSelectedRows();
+						var rowsdata = ui.table("table_gzgl").getEditRowsData(rows);
+						var rowdata = rowsdata[0];
+						var wlid = $(this).val();
+								
+						$.ajax({
+						      type: "POST",
+						      url:   ui.getRealUrl("queryWlxx"),
+						      async: false,
+						      data: {wlid:wlid },
+						      success: function(data){
+						      	var wlgg = data.wlgg;
+						      	var wlmc = data.wlmc;
+						      	var wlcb = data.wlcb;
+						      	var gzlxbh = data.wlid;
+						      	
+						      	ui.table("table_gzgl").setCell(rows[0],"wlgg",wlgg);
+						      	ui.table("table_gzgl").setCell(rows[0],"wlmc",wlmc);
+						      	ui.table("table_gzgl").setCell(rows[0],"wlcb",wlcb);
+						      	ui.table("table_gzgl").setCell(rows[0],"gzlxbh",gzlxbh);
+						      }
+						  });
+					}
+				}
+				
+			}
+			]]></attribute>
+			<attribute name="formatoptions"><![CDATA[
+				{transform : "wlbh"}
+			]]></attribute>
+		</column>
+		<column label="类型编号" name="wlbh" sortable="true" type="transform" />
+		<column label="工装规格" name="wlgg" editable="false"  editrules="{required:true}"></column>
+		<column label="工装名称" name="wlmc" editable="false"  editrules="{required:true}"></column>
+		<column label="成本" name="wlcb" editable="false"  editrules="{required:true}"></column>
+		<column label="操作" type="operation">
+			<attribute name="formatoptions"><![CDATA[
+					[
+						{
+							name:"edit",
+							icon:"icon-edit",
+							label:"编辑",
+							click:editRow
+						},
+						{
+							name:"del",
+							icon:"icon-delete",
+							label:"删除",
+							click:delRow
+						}
+					]
+				]]></attribute>
+		</column>
+		<column label="新增标记" name="addSign"  hidden="true" ></column>
+	</table>
+	
+	<modal name="qyeryModal" heading="查询工装" sizing="large" show="false" keyboard="true"  onShown="qyeryModalOnShown">
+		<modal-body>
+			<form name="form-horizontal"  horizontal="true">
+				<form-body>
+					<form-group>
+						<label for="query_gzbh" text="工装编号" layoutconstraint="md:2;sm:2"/>
+						<!-- <text name="query_gzbh" placeholder="请输工装编号" layoutconstraint="md:7;sm:7;"/> -->
+						<search name="query_gzbh" url="/gzgl/gzbhSelect" displaykey="label" searchkey="label value" onSelected="onSearchSelected"  layoutconstraint="md:7;sm:7;"  >
+						</search>	
+					</form-group>
+					<form-group>
+						<label for="query_wllx" text="物料类型" layoutconstraint="md:2;sm:2"/>
+						<select name="query_wllx"  dictionary="WLLX"  placeholder="请选择物料类型" layoutconstraint="md:4;"></select>
+					</form-group>
+					<form-group>
+						<label for="query_wlbh" text="物料编号" layoutconstraint="md:2"/>
+					   <select name="query_wlbh"  parent="query_wllx" placeholder="请输入物料编号" layoutconstraint="md:7;sm:7;" url="/gzgl/changeWllb"></select>
+ 					</form-group>
+					<form-group>
+						<label for="query_gzgg" text="工装规格" layoutconstraint="md:2;sm:2"/>
+						<text name="query_gzgg" placeholder="请输工装规格" layoutconstraint="md:7;sm:7;"/>
+ 					</form-group>
+					<form-group>
+						<label for="query_gzmc" text="工装名称" layoutconstraint="md:2;sm:2"/>
+						<text name="query_gzmc" placeholder="请输工装名称" layoutconstraint="md:7;sm:7;"/>
+ 					</form-group>
+				</form-body>
+			</form>
+		</modal-body>
+		<modal-footer>
+			<button name="closeqyeryModalClick" label="取消" type="button" context="primary"  onClick="closeQueryWindow"></button>
+			<button name="qyeryModalClick" label="查询" type="button" context="primary" onClick="queryBtnClick"></button>
+		</modal-footer>
+	</modal>
+	
+	<attribute name="javascript">
+		<![CDATA[
+		function qyeryModalOnShown() {
+	    	 $('#form-horizontal')[0].reset();
+	    	 ui.select('query_wllx').val('');
+	    	 ui.select('query_wlbh').val('');
+	    }
+		
+		//记录全局
+		var editid = "";//rowid
+		var editgzbh = "";//工装编号
+		var editgzlxbh = "";//物料编号
+		
+		document.onkeydown=function(event){ 
+			var e = event || window.event || arguments.callee.caller.arguments[0];  
+			if(e && e.keyCode==13){
+			 	saveBtnClick();//回车保存
+			}   
+			if(e && e.keyCode==27){     
+				ui.table("table_gzgl").restoreRow(editid);
+			 	editid = "";//ESC退出编辑
+			}     
+		};
+		
+		function onSearchSelected(data){
+			
+		}
+		
+		//加载结束初始化
+		function table_editreset() {
+			editid = "";
+		}
+		function closeQueryWindow() {
+	    	ui.modal("qyeryModal").hide();
+	    }
+	    //显示查询窗口
+	    function openQueryWindow() {
+	    	ui.modal("qyeryModal").show();
+	    }
+	    //查询数据
+	    function queryBtnClick(){
+			var data_row = {};
+			data_row.query_gzbh = $('#query_gzbh').val();
+			data_row.query_wllx = $('#query_wllx').val();
+			data_row.query_wlbh = $('#query_wlbh').val();
+			data_row.query_gzgg = $('#query_gzgg').val();
+			data_row.query_gzmc = $('#query_gzmc').val();
+			ui.table("table_gzgl").search(data_row);
+			closeQueryWindow();
+		}
+		
+		//addrow
+		function addRow(){
+		if(("" != editid && rowid!=editid)&&(editgzbh != $('#'+editid+"_gzbh").val()||editgzlxbh != $('#'+editid+"_gzlxbh").val())) {
+				ui.confirm("您是否要保存该条记录？", function(data){
+				if(data){
+						saveBtnClick();
+					}else{
+						ui.table("table_gzgl").restoreRow(editid);
+						var rowid = (new Date()).getTime();	
+						ui.table("table_gzgl").addRow(rowid,{addSign:"1"},"first");
+						ui.table("table_gzgl").editRow(rowid);
+						editid = rowid;
+						editgzbh = $('#'+editid+"_gzbh").val();
+						editgzlxbh = $('#'+editid+"_gzlxbh").val();
+					}
+				});
+			}else {
+				if('1'==ui.table("table_gzgl").getCell(editid,"addSign"))
+				{
+					ui.warn("请先保存当前信息!", "提示!");
+					return;
+				}
+				ui.table("table_gzgl").restoreRow(editid);
+				var rowid = (new Date()).getTime();																											 
+				ui.table("table_gzgl").addRow(rowid,{addSign:"1"},"first");
+				ui.table("table_gzgl").editRow(rowid);
+				ui.table("table_gzgl").selectRow(rowid);
+				editid = rowid;
+				
+				editgzbh = $('#'+editid+"_gzbh").val();
+				editgzlxbh = $('#'+editid+"_gzlxbh").val();
+			}
+		}
+		//删除数据	
+		function delRow(name,rowid){
+		
+		 	if('1'==ui.table("table_gzgl").getCell(rowid,"addSign"))
+		 	{
+		 		ui.table("table_gzgl").removeRow(rowid);
+		 		editid = "";
+		 		return false;
+		 	}
+		 	ui.confirm("您确定要删除该条记录吗？", function(req){
+			if(req){
+		 	$.ajax({
+		        type: "POST",
+		        url:  ui.getRealUrl("/gzgl/del_gzxx"),
+		        async: false,
+		        data: {data_list : rowid},
+		        success: function(data){
+		          	ui.table("table_gzgl").removeRow(rowid);
+		            ui.success("删除成功！");
+		         },
+		         error:function(){
+		         	//ui.table("table_gzgl").reload();
+		            ui.error()("删除失败！");
+		          }
+		     });
+		     }
+		     });
+		}
+		
+		//保存
+		function saveBtnClick(){
+			if(!ui.table("table_gzgl").validate(editid))
+			{
+				ui.warn("请检查录入数据!", "提示!");
+				return false;
+			}
+			var data_list= [];
+			if(""!=editid)
+			{
+				var data_row = {};
+				data_row.gzid = ui.table("table_gzgl").getCell(editid,"gzid");
+				data_row.gzbh = $('#'+editid+"_gzbh").val();
+				data_row.gzlxbh =ui.table("table_gzgl").getCell(editid,"gzlxbh");
+				data_row.addSign = ui.table("table_gzgl").getCell(editid,"addSign");
+				data_list.push(data_row);
+				$.ajax({
+		             type: "POST",
+		             url:  ui.getRealUrl("/gzgl/update_gzxx"),
+		             async: false,
+		             data: {data_list : JSON.stringify(data_list)},
+		             success: function(data){
+		             	if(data.code ==0){
+			             	editid = "";
+			             	ui.table("table_gzgl").reload();
+			             	ui.success("保存成功！");
+		             	}
+						else{
+							ui.error(data.message,"提示");
+						}
+		             },
+		             error:function(){
+			         	ui.table("table_gzgl").reload();
+			            ui.error()("保存失败！");
+		          	}
+		         });
+			}
+		}
+		function editRow(name,rowid){
+			dbltable_gzglClickrow(rowid,'') ;
+		}
+		//双击进入修改
+		function dbltable_gzglClickrow(rowid,status) {		
+			if(("" != editid && rowid!=editid)&&(editgzbh != $('#'+editid+"_gzbh").val()||editgzlxbh != $('#'+editid+"_gzlxbh").val())) {
+				ui.confirm("您是否要保存该条记录？", function(data){
+				if(data){
+						saveBtnClick();
+					}else{
+						ui.table("table_gzgl").restoreRow(editid);
+						ui.table("table_gzgl").editRow(rowid);
+						editid = rowid;
+						editgzbh = $('#'+editid+"_gzbh").val();
+						editgzlxbh = $('#'+editid+"_gzlxbh").val();
+					}
+				});
+			}else {
+				if(rowid!=editid){
+					ui.table("table_gzgl").restoreRow(editid);
+					ui.table("table_gzgl").editRow(rowid);
+					editid = rowid;
+					editgzbh = $('#'+editid+"_gzbh").val();
+					editgzlxbh = $('#'+editid+"_gzlxbh").val();
+				}
+				
+			}
+		}
+		]]>
+	</attribute>
+		
+</view>

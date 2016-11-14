@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 工装信息表 -->
+<model version="1.0.1" name="mm_gzb">
+	<fields>
+		<gzid type="pk" required="true" pk="true" comment="工装ID" label="工装ID"/>
+		<gzbh type="string" required="true" maxlength="20" comment="工装编号" label="工装编号"/>
+		<gzlxbh type="pk" required="true" comment="工装类型编号" label="工装类型编号"/>
+	</fields>
+</model>

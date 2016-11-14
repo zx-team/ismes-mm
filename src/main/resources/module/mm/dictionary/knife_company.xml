@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<category name="NFJLDW" label="刀具计量单位"  description="计量单位">
+	<field name="" value="10" label="个" parent="" state="valid"/>
+	<field name="" value="50" label="盒" parent="" state="valid"/>
+</category>

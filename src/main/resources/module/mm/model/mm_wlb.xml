@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 物料信息表 -->
+<model version="1.0.5" name="mm_wlb">
+	<fields>
+		<wlid type="pk" required="true" pk="true" comment="物料ID" label="物料ID"/>
+		<wlbh type="string" required="true" maxlength="60" comment="物料编号" label="物料编号"/>
+		<wlmc type="string" required="true" maxlength="50" comment="物料名称" label="物料名称"/>
+		<wlpp type="string" required="false" maxlength="50" comment="物料品牌" label="物料品牌"/>
+		<wldwdm type="dict" required="false" maxlength="25" comment="物料单位" label="物料单位"/>
+		<wllxdm type="dict" required="false" maxlength="25" comment="物料类型" label="物料类型"/>
+		<wllbdm type="dict" required="false" maxlength="25" comment="物料类别" label="物料类别"/>
+		<jgztdm type="dict" required="false" maxlength="25" comment="加工状态" label="加工状态"/>
+		<wlzt type="dict" required="false" comment="物料状态" label="物料状态"/>
+		<wlcb type="decimal" required="false" length="8" precision="2" comment="物料成本" label="物料成本"/>
+		<wlgg type="string" required="false" maxlength="50" comment="物料规格" label="物料规格"/>
+		<wltm type="string" required="false" maxlength="50" comment="物料类型条码" label="物料类型条码"/>
+		<yxq type="string" required="false" maxlength="50" comment="有效期" label="有效期"/>
+		<sysm type="string" required="false" maxlength="50" comment="使用寿命" label="有效期"/>
+		<aqkc type="string" required="false" maxlength="50" comment="安全库存" label="有效期"/>
+		<bz type="string" required="false" maxlength="200" comment="备注" label="备注"/>
+		
+		<djsm type="integer" required="false" comment="刀具寿命" label="刀具寿命"/>
+		<wltpid type="string" required="false" comment="图片ID" label="图片ID"/>
+	</fields>
+</model>

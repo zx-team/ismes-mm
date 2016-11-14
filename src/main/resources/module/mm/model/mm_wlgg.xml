@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 物料规格表 -->
+<model version="1.0.0" name="mm_wlgg">
+	<fields>
+		<ggid type="pk" required="true" pk="true" comment="规格ID" label="规格ID"/>
+		<ggpid type="integer" required="true" maxlength="20" comment="父ID" label="父ID"/>
+		<ggname type="string" required="true" maxlength="20" comment="规格名称" label="规格名称"/>
+		<ggvalue type="string" required="true" maxlength="20" comment="规格数值" label="规格数值"/>
+	</fields>
+</model>

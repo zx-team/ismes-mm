@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="mm" version="1.0.0" category="system">
+	<information>
+		<name>System User Management</name>
+		<vendor>
+			<name>Isesol isMES</name>
+			<url>http://www.isesol.com/</url>
+		</vendor>
+		<description>User is a module which adds user functionality to system.</description>
+		<license>AGPL</license>
+	</information>
+	<activities>
+		<activity name="service" dialect="java" class="com.isesol.mes.ismes.mm.service.MaterialManagementService"/>
+		<activity name="wlgl" dialect="java" roles="SYSTEM_MANAGEMENT_ROLE"  class="com.isesol.mes.ismes.mm.activity.WlglActivity"/>
+		<activity name="gzgl" dialect="java" roles="SYSTEM_MANAGEMENT_ROLE"  class="com.isesol.mes.ismes.mm.activity.GzglActivity"/>
+	</activities>
+	<roles>
+		<role name="SYSTEM_MANAGEMENT_ROLE" label="系统管理人员_物料管理" description="系统基础信息设置" />
+	</roles>
+	<menus>
+		<!-- 工厂建模（一级） -->
+		<category name="factory_modeling" label="工厂建模" icon="#00cc92;Factory_modeling"  weight="2"/>
+		<category name="material_management_fm" label="物料管理" icon="button " category = "factory_modeling" weight="30"/>
+		<menu name="wlgl_distribution" label="物料类型管理" activity="wlgl" activity-method="query_wlgl"
+			category="material_management_fm" roles="SYSTEM_MANAGEMENT_ROLE" description="物料类型管理" icon="button" weight="100"/>
+		<menu name="djgl_distribution" label="刀具类型管理" activity="wlgl" activity-method="query_djgl"
+			category="material_management_fm" roles="SYSTEM_MANAGEMENT_ROLE" description="刀具类型管理" icon="button" weight="200"/>
+		<menu name="gzlj_distribution" label="工装类型管理" activity="wlgl" activity-method="query_gzlj"
+			category="material_management_fm" roles="SYSTEM_MANAGEMENT_ROLE" description="工装类型管理" icon="button" weight="300"/>
+<!-- 		<menu name="gzgl_distribution" label="工装管理" activity="gzgl" activity-method="query_gzgl" 
+			category="material_management_fm" roles="SYSTEM_MANAGEMENT_ROLE" description="工装管理" icon="button" weight="400"/> -->
+	</menus>
+	<services>
+		<service name = "mmservice_wlxx" activity = "service" activity-method = "query_wlxx"/>
+		<service name = "mmservice_wlxx_new" activity = "service" activity-method = "query_wlxx_new"/>
+		<service name = "mmservice_wlxxBybhmc" activity = "service" activity-method = "query_wlxxBybhmc"/>
+		<service name = "mmservice_wlxxkc" activity = "service" activity-method = "query_wlxxkc"/>
+		<service name = "materielInfoByWlidService" activity = "service" activity-method = "materielInfoByWlid"/>
+		<service name = "insertWlxxService" activity = "service" activity-method = "insertNewWlInfo"/>
+		<service name = "deleteWlxxService" activity = "service" activity-method = "deleteWlInfoById"/>
+		<service name = "updateWlxxService" activity = "service" activity-method = "updateWlInfo"/>
+		<service name = "mmservice_queryGzxx" activity = "service" activity-method = "queryGzxx"/>
+		<service name = "mmservice_query_wlxxByWlid" activity = "service" activity-method = "query_wlxxByWlid"/>
+		<service name = "mmservice_query_wlxxByWlbh" activity = "service" activity-method = "query_wlxxByWlbh"/>
+		<service name = "mmservice_query_wlxxByWlbh_new" activity = "service" activity-method = "query_wlxxByWlbh_new"/>
+		<service name = "mmservice_query_wlxx_by_mpgg" activity = "service" activity-method = "query_wlxx_by_mpgg"/>
+		<service name = "mmservice_query_wlxx_by_wlid" activity = "service" activity-method = "query_wlxx_by_wlid"/>
+		<service name = "mmservice_query_wlxx_by_wlids" activity = "service" activity-method = "query_wlxx_by_wlids"/>
+		<service name = "mmservice_query_wlxx_by_wlid_where_wllb" activity = "service" activity-method = "query_wlxx_by_wlid_where_wllb"/>
+		<service name = "mmservice_query_wlxx_by_gzbh" activity = "service" activity-method = "query_wlxx_by_gzbh"/>
+		<service name = "mmservice_query_wlxx_bywlgg" activity = "service" activity-method = "query_wlxx_bywlgg"/>
+		<service name = "mmservice_query_wlggid_bywlggxx" activity = "service" activity-method = "query_wlggid_bywlggxx"/>
+	</services>
+</module>
